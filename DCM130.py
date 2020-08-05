@@ -89,6 +89,9 @@ class ScopetekDevice():
 
         self.request(_Request.CONTROL, 0x000f, 0x0003)
 
+    def stop(self) -> None:
+        self.request(_Request.CONTROL, 0x000f, 0x0000)
+
     def request(self, request: _Request, index: int, value: int, *,
                 data: Optional[List[int]] = None, size: Optional[int] = None,
                 timeout: int = 0) -> Optional[List[int]]:
