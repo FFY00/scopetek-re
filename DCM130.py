@@ -107,12 +107,13 @@ def main() -> None:
 
     dev.request(_Request.REG_WRITE, 0x000a, 0x8000)
     dev.request(_Request.REG_WRITE, 0x000d, 0x0001)
+    time.sleep(0.1)
     dev.request(_Request.REG_WRITE, 0x000d, 0x0000)
-
-    time.sleep(1)
+    time.sleep(0.1)
 
     dev.request(_Request.REG_WRITE, 0x0001, 0x0015)  # X?
     dev.request(_Request.REG_WRITE, 0x0002, 0x0021)  # Y?
+    time.sleep(0.2)
 
     dev.request(_Request.REG_WRITE, 0x0020, 0x0000)
     dev.request(_Request.REG_WRITE, 0x001e, 0x8040)
@@ -128,8 +129,9 @@ def main() -> None:
 
     dev.request(_Request.REG_WRITE, 0x000a, 0x8001)
 
-    dev.request(_Request.REG_WRITE, 0x0022, 0x0033)
-    dev.request(_Request.REG_WRITE, 0x0023, 0x0033)
+    # resolution?
+    dev.request(_Request.REG_WRITE, 0x0022, 0x0033)  # X?
+    dev.request(_Request.REG_WRITE, 0x0023, 0x0033)  # Y?
 
     dev.request(_Request.REG_WRITE, 0x0005, 0x0150)
     dev.request(_Request.REG_WRITE, 0x000a, 0x8000)
@@ -140,6 +142,7 @@ def main() -> None:
     dev.request(_Request.REG_READ, 0x0002, 0x0000, size=3)
 
     dev.request(_Request.REG_WRITE, 0x0009, 0x012c)
+    time.sleep(0.2)
     dev.request(_Request.REG_WRITE, 0x0035, 0x0056)
 
     dev.request(_Request.CONTROL, 0x000f, 0x0003)
