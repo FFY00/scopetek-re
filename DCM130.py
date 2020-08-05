@@ -40,6 +40,55 @@ class ScopetekDevice():
         self.__logger = logging.getLogger(self.__class__.__name__)
         self._dev = device
 
+    def start(self) -> None:
+        self.request(_Request.CONTROL, 0x000f, 0x0001)
+        self.request(_Request.CONTROL, 0x000f, 0x0000)  # stop
+        self.request(_Request.CONTROL, 0x000f, 0x0001)
+
+        self.request(_Request.REG_READ, 0x0000, 0x0000, size=3)
+
+        self.request(_Request.REG_WRITE, 0x000a, 0x8000)
+        self.request(_Request.REG_WRITE, 0x000d, 0x0001)
+        time.sleep(0.1)
+        self.request(_Request.REG_WRITE, 0x000d, 0x0000)
+        time.sleep(0.1)
+
+        self.request(_Request.REG_WRITE, 0x0001, 0x0015)  # X?
+        self.request(_Request.REG_WRITE, 0x0002, 0x0021)  # Y?
+        time.sleep(0.2)
+
+        self.request(_Request.REG_WRITE, 0x0020, 0x0000)
+        self.request(_Request.REG_WRITE, 0x001e, 0x8040)
+        self.request(_Request.REG_WRITE, 0x004e, 0x0030)
+
+        self.request(_Request.REG_WRITE, 0x0004, 0x07ff)  # X?
+        self.request(_Request.REG_WRITE, 0x0003, 0x05ff)  # Y?
+
+        self.request(_Request.REG_WRITE, 0x002b, 0x0060)
+        self.request(_Request.REG_WRITE, 0x002c, 0x0060)
+        self.request(_Request.REG_WRITE, 0x002d, 0x0060)
+        self.request(_Request.REG_WRITE, 0x002e, 0x0060)
+
+        self.request(_Request.REG_WRITE, 0x000a, 0x8001)
+
+        # resolution?
+        self.request(_Request.REG_WRITE, 0x0022, 0x0033)  # X?
+        self.request(_Request.REG_WRITE, 0x0023, 0x0033)  # Y?
+
+        self.request(_Request.REG_WRITE, 0x0005, 0x0150)
+        self.request(_Request.REG_WRITE, 0x000a, 0x8000)
+        self.request(_Request.REG_WRITE, 0x0005, 0x0300)
+
+        self.request(_Request.REG_READ, 0x0005, 0x0000, size=3)
+        self.request(_Request.REG_READ, 0x0004, 0x0000, size=3)
+        self.request(_Request.REG_READ, 0x0002, 0x0000, size=3)
+
+        self.request(_Request.REG_WRITE, 0x0009, 0x012c)
+        time.sleep(0.2)
+        self.request(_Request.REG_WRITE, 0x0035, 0x0056)
+
+        self.request(_Request.CONTROL, 0x000f, 0x0003)
+
     def request(self, request: _Request, index: int, value: int, *,
                 data: Optional[List[int]] = None, size: Optional[int] = None,
                 timeout: int = 0) -> Optional[List[int]]:
@@ -99,53 +148,7 @@ def main() -> None:
 
     dev = ScopetekDevice(usb_dev)
 
-    dev.request(_Request.CONTROL, 0x000f, 0x0001)
-    dev.request(_Request.CONTROL, 0x000f, 0x0000)  # stop
-    dev.request(_Request.CONTROL, 0x000f, 0x0001)
-
-    dev.request(_Request.REG_READ, 0x0000, 0x0000, size=3)
-
-    dev.request(_Request.REG_WRITE, 0x000a, 0x8000)
-    dev.request(_Request.REG_WRITE, 0x000d, 0x0001)
-    time.sleep(0.1)
-    dev.request(_Request.REG_WRITE, 0x000d, 0x0000)
-    time.sleep(0.1)
-
-    dev.request(_Request.REG_WRITE, 0x0001, 0x0015)  # X?
-    dev.request(_Request.REG_WRITE, 0x0002, 0x0021)  # Y?
-    time.sleep(0.2)
-
-    dev.request(_Request.REG_WRITE, 0x0020, 0x0000)
-    dev.request(_Request.REG_WRITE, 0x001e, 0x8040)
-    dev.request(_Request.REG_WRITE, 0x004e, 0x0030)
-
-    dev.request(_Request.REG_WRITE, 0x0004, 0x07ff)  # X?
-    dev.request(_Request.REG_WRITE, 0x0003, 0x05ff)  # Y?
-
-    dev.request(_Request.REG_WRITE, 0x002b, 0x0060)
-    dev.request(_Request.REG_WRITE, 0x002c, 0x0060)
-    dev.request(_Request.REG_WRITE, 0x002d, 0x0060)
-    dev.request(_Request.REG_WRITE, 0x002e, 0x0060)
-
-    dev.request(_Request.REG_WRITE, 0x000a, 0x8001)
-
-    # resolution?
-    dev.request(_Request.REG_WRITE, 0x0022, 0x0033)  # X?
-    dev.request(_Request.REG_WRITE, 0x0023, 0x0033)  # Y?
-
-    dev.request(_Request.REG_WRITE, 0x0005, 0x0150)
-    dev.request(_Request.REG_WRITE, 0x000a, 0x8000)
-    dev.request(_Request.REG_WRITE, 0x0005, 0x0300)
-
-    dev.request(_Request.REG_READ, 0x0005, 0x0000, size=3)
-    dev.request(_Request.REG_READ, 0x0004, 0x0000, size=3)
-    dev.request(_Request.REG_READ, 0x0002, 0x0000, size=3)
-
-    dev.request(_Request.REG_WRITE, 0x0009, 0x012c)
-    time.sleep(0.2)
-    dev.request(_Request.REG_WRITE, 0x0035, 0x0056)
-
-    dev.request(_Request.CONTROL, 0x000f, 0x0003)
+    dev.start()
 
 
 if __name__ == '__main__':
